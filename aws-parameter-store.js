@@ -36,7 +36,10 @@ class SimpleCache {
 
 module.exports = (RED) => {
     const mem = new SimpleCache();
-    const ssm = new aws.SSM();
+    let ssm = new aws.SSM({
+        region: RED.setting.awsParameterStoreRegion,
+    });
+    let lastRegion = RED.setting.awsParameterStoreRegion;
 
     function fetchPath(node, next) {
         return new Promise((resolve, reject) => {
@@ -67,7 +70,7 @@ module.exports = (RED) => {
         });
     }
 
-    function AwsSsm(config) {
+    function AwsParmeterStore(config) {
         RED.nodes.createNode(this, config);
         this.keyPath = config.keyPath;
         this.cache = config.cache;
@@ -75,6 +78,12 @@ module.exports = (RED) => {
         this.decrypt = config.decrypt;
         const cacheKey = `${this.keyPath}-${this.isPrefix}-${this.decrypt}`;
         this.on('input', (msg, send, done) => {
+            // detect parameter store region change.
+            if (RED.setting.awsParameterStoreRegion !== lastRegion) {
+                ssm = new aws.SSM({
+                    region: RED.setting.awsParameterStoreRegion,
+                });
+            }
             if (this.cache) {
                 const val = mem.get(cacheKey);
                 if (val) {
@@ -118,5 +127,12 @@ module.exports = (RED) => {
         });
     }
 
-    RED.nodes.registerType("aws-parameter-store", AwsSsm);
+    RED.nodes.registerType("aws-parameter-store", AwsParmeterStore, {
+        settings: {
+            awsParameterStoreRegion: {
+                value: 'us-west-2',
+                exportable: true,
+            },
+        },
+    });
 };
