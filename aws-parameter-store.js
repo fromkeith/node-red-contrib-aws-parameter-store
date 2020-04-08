@@ -23,6 +23,9 @@ class SimpleCache {
     }
     get(path) {
         const entry = this.cache[path];
+        if (!entry) {
+            return undefined;
+        }
         if (Date.now() - entry.at > CACHE_AGE) {
             delete this.cache[path];
             return undefined;
