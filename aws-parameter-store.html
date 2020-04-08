@@ -1,0 +1,44 @@
+<script type="text/javascript">
+    RED.nodes.registerType('aws-parameter-store',{
+        category: 'function',
+        color: '#a6bbcf',
+        defaults: {
+            keyPath: {value: "", required: true},
+            isPrefix: {value: "", required: true},
+            cache: {value: false, required: true},
+            decrypt: {value: true, required: true},
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "file.png",
+        label() {
+            return this.keyPath || "aws-parameter-store";
+        },
+    });
+</script>
+<script type="text/html" data-template-name="aws-parameter-store">
+    <div class="form-row">
+        <label for="node-input-keyPath">Key Path</label>
+        <input type="text" id="node-input-keyPath" placeholder="/param/name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-isPrefix">Is Prefix</label>
+        <input type="checkbox" id="node-input-isPrefix">
+    </div>
+    <div class="form-row">
+        <label for="node-input-cache">Cache Result</label>
+        <input type="checkbox" id="node-input-cache">
+    </div>
+    <div class="form-row">
+        <label for="node-input-decrypt">With Decryption</label>
+        <input type="checkbox" id="node-input-decrypt">
+    </div>
+</script>
+<script type="text/html" data-help-name="aws-parameter-store">
+    <p>Pulls configuration from AWS Systems Manager Parameter Store. Use it to get secrets or other configuration values. It will populate the result in the payload with the key path and value. Eg. payload = {keyPath: value}</p>
+    <p><strong>Is Prefix</strong> If this keypath is a prefix, and we should recursively request all the keys below it.
+    </p>
+    <p><strong>Cache</strong> Use cache to cache the result of the call in NodeRed's memory for 30 minutes. Use this to reduce calls to Parameter Store.
+    </p>
+    <p><strong>Input</strong> Is ignored</p>
+</script>
