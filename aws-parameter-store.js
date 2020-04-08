@@ -71,7 +71,7 @@ module.exports = (RED) => {
         this.isPrefix = config.isPrefix;
         this.decrypt = config.decrypt;
         const cacheKey = `${this.keyPath}-${this.isPrefix}-${this.decrypt}`;
-        node.on('input', (msg, send, done) => {
+        this.on('input', (msg, send, done) => {
             if (this.cache) {
                 const val = mem.get(cacheKey);
                 if (val) {
