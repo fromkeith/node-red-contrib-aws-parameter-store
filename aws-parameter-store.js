@@ -37,9 +37,9 @@ class SimpleCache {
 module.exports = (RED) => {
     const mem = new SimpleCache();
     let ssm = new aws.SSM({
-        region: RED.setting.awsParameterStoreRegion,
+        region: RED.settings.awsParameterStoreRegion,
     });
-    let lastRegion = RED.setting.awsParameterStoreRegion;
+    let lastRegion = RED.settings.awsParameterStoreRegion;
 
     function fetchPath(node, next) {
         return new Promise((resolve, reject) => {
@@ -79,9 +79,9 @@ module.exports = (RED) => {
         const cacheKey = `${this.keyPath}-${this.isPrefix}-${this.decrypt}`;
         this.on('input', (msg, send, done) => {
             // detect parameter store region change.
-            if (RED.setting.awsParameterStoreRegion !== lastRegion) {
+            if (RED.settings.awsParameterStoreRegion !== lastRegion) {
                 ssm = new aws.SSM({
-                    region: RED.setting.awsParameterStoreRegion,
+                    region: RED.settings.awsParameterStoreRegion,
                 });
             }
             if (this.cache) {
